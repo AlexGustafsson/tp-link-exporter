@@ -1,9 +1,9 @@
 <p align="center">
-  <a href="https://github.com/AlexGustafsson/tplink-exporter/blob/master/go.mod">
-    <img src="https://shields.io/github/go-mod/go-version/AlexGustafsson/tplink-exporter" alt="Go Version" />
+  <a href="https://github.com/AlexGustafsson/tp-link-exporter/blob/master/go.mod">
+    <img src="https://shields.io/github/go-mod/go-version/AlexGustafsson/tp-link-exporter" alt="Go Version" />
   </a>
-  <a href="https://github.com/AlexGustafsson/tplink-exporter/releases">
-    <img src="https://flat.badgen.net/github/release/AlexGustafsson/tplink-exporter" alt="Latest Release" />
+  <a href="https://github.com/AlexGustafsson/tp-link-exporter/releases">
+    <img src="https://flat.badgen.net/github/release/AlexGustafsson/tp-link-exporter" alt="Latest Release" />
   </a>
   <br>
   <strong><a href="#quickstart">Quick Start</a> | <a href="#contribute">Contribute</a> </strong>
@@ -17,12 +17,12 @@ TP-Link Exporter is a Prometheus exporter that exposes the state of TP-Link smar
 ## Quickstart
 <a name="quickstart"></a>
 
-First, download [the latest release](https://github.com/AlexGustafsson/tplink-exporter/releases) for your architecture.
+First, download [the latest release](https://github.com/AlexGustafsson/tp-link-exporter/releases) for your architecture.
 
 The exporter can now be started like so:
 
 ```shell
-tplink-exporter
+tp-link-exporter
 ```
 
 ## Table of contents
@@ -45,14 +45,14 @@ tplink-exporter
 
 ### Downloading a pre-built release
 
-Download the latest release from [here](https://github.com/AlexGustafsson/tplink-exporter/releases).
+Download the latest release from [here](https://github.com/AlexGustafsson/tp-link-exporter/releases).
 
 ### Build from source
 
 Clone the repository.
 
 ```sh
-git clone https://github.com/AlexGustafsson/tplink-exporter.git && cd tplink-exporter
+git clone https://github.com/AlexGustafsson/tp-link-exporter.git && cd tp-link-exporter
 ```
 
 Optionally check out a specific version.
@@ -88,7 +88,7 @@ Any help with the project is more than welcome.
 
 ```sh
 # Clone the repository
-https://github.com/AlexGustafsson/tplink-exporter.git && cd tplink-exporter
+https://github.com/AlexGustafsson/tp-link-exporter.git && cd tp-link-exporter
 
 # Show available commands
 make help
