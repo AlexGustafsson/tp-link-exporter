@@ -98,3 +98,11 @@ make build
 ```
 
 _Note: due to a bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93082, https://bugs.llvm.org/show_bug.cgi?id=44406, https://openradar.appspot.com/radar?id=4952611266494464), clang is required when building for macOS. GCC cannot be used. Build the server like so: `CC=clang make server`._
+
+### Testing
+
+See https://github.com/plasticrake/tplink-smarthome-simulator for information on how to simulate devices.
+
+### Contributors
+
+A lot of effort has been put in by [plasticrake](https://github.com/plasticrake) in TP-Link APIs and simulation. This project would have been much more difficult to create was it not for his efforts.
