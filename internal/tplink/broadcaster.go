@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 )
 
 type Broadcaster struct {
@@ -13,13 +13,15 @@ type Broadcaster struct {
 
 	socket    *net.UDPConn
 	responses chan *DeviceResponse
+	log       *zap.Logger
 }
 
-func NewBroadcaster() *Broadcaster {
+func NewBroadcaster(log *zap.Logger) *Broadcaster {
 	return &Broadcaster{
 		BroadcastAddress: "255.255.255.255",
 
 		responses: make(chan *DeviceResponse),
+		log:       log,
 	}
 }
 
@@ -33,7 +35,7 @@ func (f *Broadcaster) Listen() error {
 	if err != nil {
 		return err
 	}
-	log.Infof("Listen address: %v", f.socket.LocalAddr())
+	f.log.Info("Listening for responses", zap.String("address", f.socket.LocalAddr().String()))
 
 	go f.broadcastContinously()
 
@@ -41,7 +43,7 @@ func (f *Broadcaster) Listen() error {
 	for {
 		n, _, err := f.socket.ReadFromUDP(b)
 		if err != nil {
-			log.Errorf("Failed to read from socket: %v", err)
+			f.log.Error("Failed to read from socket", zap.Error(err))
 			continue
 		}
 
@@ -50,7 +52,7 @@ func (f *Broadcaster) Listen() error {
 		var response DeviceResponse
 		err = json.Unmarshal(message, &response)
 		if err != nil {
-			log.Errorf("Failed to unmarshal device broadcast response: %s, %v", message, err)
+			f.log.Error("Failed to unmarshal device broadcast response", zap.String("message", string(message)), zap.Error(err))
 			continue
 		}
 		f.responses <- &response
@@ -67,7 +69,7 @@ func (f *Broadcaster) Broadcast() error {
 		return err
 	}
 
-	log.Debugf("Broadcasting")
+	f.log.Debug("Broadcasting", zap.String("address", address.String()))
 	message := EncryptMessage(InfoMessage)
 	_, err = f.socket.WriteTo(message, address)
 	if err != nil {
@@ -84,7 +86,7 @@ func (f *Broadcaster) broadcastContinously() {
 		<-ticker.C
 		err := f.Broadcast()
 		if err != nil {
-			log.Errorf("Failed to broadcast: %v", err)
+			f.log.Error("Failed to broadcast", zap.Error(err))
 		}
 	}
 }

@@ -1,19 +1,36 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/AlexGustafsson/tp-link-exporter/internal/tplink"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 )
 
 func defaultCommand(context *cli.Context) error {
-	broadcaster := tplink.NewBroadcaster()
-	broadcaster.BroadcastAddress = context.String("address") + ":9999"
-	log.Infof("Finding devices in %s:9999", context.String("address"))
+	address := context.String("address")
+	verbose := context.Bool("verbose")
+
+	// Configure base logging
+	logConfig := zap.NewProductionConfig()
+	if verbose {
+		logConfig.Level.SetLevel(zap.DebugLevel)
+	}
+	log, err := logConfig.Build()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to initialize logging: %v", err)
+		os.Exit(1)
+	}
+	defer log.Sync()
+
+	broadcaster := tplink.NewBroadcaster(log)
+	broadcaster.BroadcastAddress = address + ":9999"
+	log.Info("Finding devices", zap.String("address", address), zap.Int("port", 9999))
 	go broadcaster.Listen()
 
 	collector := tplink.NewCollector()
@@ -24,10 +41,12 @@ func defaultCommand(context *cli.Context) error {
 	go func() {
 		for {
 			device := <-broadcaster.Responses()
+			log.Debug("Found device", zap.String("name", device.Device.Info.Alias))
 			collector.CollectDevice(device)
 		}
 	}()
 
+	log.Info("Listening", zap.String("address", ":2112"))
 	http.Handle("/metrics", promhttp.Handler())
 	return http.ListenAndServe(":2112", nil)
 }

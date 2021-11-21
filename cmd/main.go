@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
 
 	"github.com/AlexGustafsson/tp-link-exporter/internal/version"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -36,16 +36,8 @@ Options:{{range .Flags}}
    {{.}}{{end}}{{end}}
 `
 
-func setDebugOutputLevel() {
-	for _, flag := range os.Args {
-		if flag == "-v" || flag == "--verbose" {
-			log.SetLevel(log.DebugLevel)
-		}
-	}
-}
-
 func commandNotFound(context *cli.Context, command string) {
-	log.Errorf(
+	fmt.Fprintf(os.Stderr,
 		"%s: '%s' is not a %s command. See '%s help'.",
 		context.App.Name,
 		command,
@@ -56,8 +48,6 @@ func commandNotFound(context *cli.Context, command string) {
 }
 
 func main() {
-	setDebugOutputLevel()
-
 	cli.AppHelpTemplate = appHelpTemplate
 	cli.CommandHelpTemplate = commandHelpTemplate
 
@@ -92,8 +82,8 @@ func main() {
 	sort.Sort(cli.CommandsByName(app.Commands))
 
 	err := app.Run(os.Args)
-
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
