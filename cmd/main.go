@@ -81,6 +81,11 @@ func main() {
 			Name:  "verbose, v",
 			Usage: "Enable verbose logging",
 		},
+		&cli.StringFlag{
+			Name:        "address",
+			Usage:       "Address to talk to. May be a broadcast address",
+			DefaultText: "192.168.1.255",
+		},
 	}
 
 	sort.Sort(cli.FlagsByName(app.Flags))

@@ -5,19 +5,20 @@ import (
 	"os"
 
 	"github.com/AlexGustafsson/tp-link-exporter/tplink"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
 func defaultCommand(context *cli.Context) error {
-	finder := tplink.NewDeviceFinder()
-	finder.BroadcastAddress = "10.0.0.200:9999"
-
-	go finder.Listen()
+	broadcaster := tplink.NewBroadcaster()
+	broadcaster.BroadcastAddress = context.String("address") + ":9999"
+	log.Infof("Finding devices in %s:9999", context.String("address"))
+	go broadcaster.Listen()
 
 	encoder := json.NewEncoder(os.Stdout)
 	encoder.SetIndent("", "  ")
 	for {
-		system := <-finder.Found()
-		encoder.Encode(system)
+		device := <-broadcaster.Responses()
+		encoder.Encode(device)
 	}
 }
