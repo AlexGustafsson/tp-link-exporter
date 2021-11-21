@@ -1,10 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"os"
+	"net/http"
 
-	"github.com/AlexGustafsson/tp-link-exporter/tplink"
+	"github.com/AlexGustafsson/tp-link-exporter/internal/tplink"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -15,10 +16,18 @@ func defaultCommand(context *cli.Context) error {
 	log.Infof("Finding devices in %s:9999", context.String("address"))
 	go broadcaster.Listen()
 
-	encoder := json.NewEncoder(os.Stdout)
-	encoder.SetIndent("", "  ")
-	for {
-		device := <-broadcaster.Responses()
-		encoder.Encode(device)
+	collector := tplink.NewCollector()
+	if err := prometheus.DefaultRegisterer.Register(collector); err != nil {
+		return err
 	}
+
+	go func() {
+		for {
+			device := <-broadcaster.Responses()
+			collector.CollectDevice(device)
+		}
+	}()
+
+	http.Handle("/metrics", promhttp.Handler())
+	return http.ListenAndServe(":2112", nil)
 }

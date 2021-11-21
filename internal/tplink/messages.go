@@ -24,7 +24,7 @@ type DeviceInfo struct {
 	ActiveMode      string  `json:"active_mode"`
 	Feature         string  `json:"feature"`
 	Updating        int     `json:"updating"`
-	RSSI            int     `json:"rssi"`
+	RSSI            float64 `json:"rssi"`
 	LedOff          int     `json:"led_off"`
 	Alias           string  `json:"alias"`
 	DeviceID        string  `json:"deviceId"`
@@ -37,10 +37,10 @@ type DeviceInfo struct {
 }
 
 type EnergyMeterInfo struct {
-	Current      float32 `json:"current"`
-	Voltage      float32 `json:"voltage"`
-	Power        float32 `json:"power"`
-	Total        float32 `json:"total"`
+	Current      float64 `json:"current"`
+	Voltage      float64 `json:"voltage"`
+	Power        float64 `json:"power"`
+	Total        float64 `json:"total"`
 	ErrorCode    int     `json:"err_code"`
 	ErrorMessage string  `json:"err_msg"`
 }
