@@ -24,7 +24,7 @@ First, download [the latest release](https://github.com/AlexGustafsson/tp-link-e
 
 The exporter can now be started like so:
 
-```shell
+```shellell
 tp-link-exporter
 ```
 
@@ -33,41 +33,102 @@ tp-link-exporter
 [Quickstart](#quickstart)<br/>
 [Features](#features)<br />
 [Installation](#installation)<br />
+[Usage](#usage)<br />
 [Metrics](#metrics)<br />
 [Contributing](#contributing)
 
 <a id="features"></a>
 ## Features
 
-* Support for HS110
-* Auto-discovery
+* Support for TP-Link devices with energy monitoring, such as HS110
+* Supports broadcasting (auto-discovery)
 
 <a id="installation"></a>
 ## Installation
-
 
 ### Downloading a pre-built release
 
 Download the latest release from [here](https://github.com/AlexGustafsson/tp-link-exporter/releases).
 
-### Build from source
+### Using docker
 
 Clone the repository.
 
-```sh
+```shell
 git clone https://github.com/AlexGustafsson/tp-link-exporter.git && cd tp-link-exporter
 ```
 
 Optionally check out a specific version.
 
-```sh
+```shell
+git checkout v0.1.0
+```
+
+Build the image.
+
+```shell
+make build-docker
+```
+
+Run a container.
+
+```shell
+docker run -p8080:8080 tp-link-exporter:v0.1.0 -- --target 192.168.1.25 --target 192.168.1.25
+```
+
+### Build from source
+
+Clone the repository.
+
+```shell
+git clone https://github.com/AlexGustafsson/tp-link-exporter.git && cd tp-link-exporter
+```
+
+Optionally check out a specific version.
+
+```shell
 git checkout v0.1.0
 ```
 
 Build the exporter.
 
-```sh
+```shell
 make build
+```
+
+## Usage
+<a name="usage"></a>
+
+```
+Usage: tp-link-exporter [global options] command [command options] [arguments]
+
+A prometheus exporter for TP-Link smart home devices
+
+Version: v0.1.0, build d663ff9. Built Mon Nov 22 20:21:42 CET 2021 using go version go1.17.2 darwin/amd64
+
+Options:
+  --address value  Address to serve metrics on (default: :8080)
+  --target value   Target address to talk to. May be specified multiple times. May be a broadcast address.
+  --verbose        Enable verbose logging (default: false)
+  --help, -h       show help (default: false)
+
+Commands:
+  version  Show the application's version
+  help     Shows a list of commands or help for one command
+
+Run 'tp-link-exporter help command' for more information on a command.
+```
+
+Example:
+
+```shellell
+tp-link-exporter --target 192.168.1.255 --target 10.0.1.20 --target 10.0.1.21
+```
+
+```
+{"level":"info","ts":1637609683.412695,"caller":"cmd/default.go:50","msg":"Finding devices","address":":8080","port":9999}
+{"level":"info","ts":1637609683.4127738,"caller":"cmd/default.go:58","msg":"Listening","address":":8080"}
+{"level":"info","ts":1637609683.4129431,"caller":"tplink/broadcaster.go:35","msg":"Listening for responses","address":"0.0.0.0:55037"}
 ```
 
 ## Metrics
@@ -110,7 +171,6 @@ tplink_relay_state{device_id="8078FAAA8BC64613B3AA41334DEC4DCE",model="HS110(EU)
 tplink_statistics_rssi{device_id="8078FAAA8BC64613B3AA41334DEC4DCE",model="HS110(EU)",name="Server",type="IOT.SMARTPLUGSWITCH"} -70
 ```
 
-
 ## Contributing
 <a name="contributing"></a>
 
@@ -118,7 +178,7 @@ Any help with the project is more than welcome.
 
 ### Development
 
-```sh
+```shell
 # Clone the repository
 https://github.com/AlexGustafsson/tp-link-exporter.git && cd tp-link-exporter
 
