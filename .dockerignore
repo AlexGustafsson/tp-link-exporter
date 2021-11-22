@@ -1,0 +1,6 @@
+/build
+.gitignore
+docker-compose.yml
+LICENSE.md
+README.md
+Dockerfile

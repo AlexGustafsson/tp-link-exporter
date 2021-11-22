@@ -9,7 +9,7 @@ GO_VERSION := $(shell go version)
 COMPILE_TIME := $(shell LC_ALL=en_US date)
 
 BUILD_VARIABLES := -X "$(PREFIX).Version=$(VERSION)" -X "$(PREFIX).Commit=$(COMMIT)" -X "$(PREFIX).GoVersion=$(GO_VERSION)" -X "$(PREFIX).CompileTime=$(COMPILE_TIME)"
-BUILD_FLAGS := -ldflags '$(BUILD_VARIABLES)'
+BUILD_FLAGS := -ldflags '-s -w $(BUILD_VARIABLES)'
 
 server_source := $(shell find . -type f -name '*.go')
 
@@ -21,7 +21,7 @@ ifeq ($(shell uname),Darwin)
 	CC=clang
 endif
 
-.PHONY: help build release build-specified format lint test clean
+.PHONY: help build build-docker release build-specified format lint test clean
 
 # Produce a short description of available make commands
 help:
@@ -29,6 +29,10 @@ help:
 
 # Build for the native platform
 build: build/tp-link-exporter
+
+# Build for docker
+build-docker:
+	docker build -t tp-link-exporter:latest -t tp-link-exporter:$(VERSION) .
 
 # Package for release
 release: tools
@@ -57,8 +61,7 @@ test: $(server_source) Makefile
 
 # Build for the native platform
 build/tp-link-exporter: $(server_source) Makefile
-	go generate ./...
-	go build $(BUILD_FLAGS) -o $@ cmd/*.go
+	CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $@ cmd/*.go
 
 # Build for the specified platform
 build-specified: build/tp-link-exporter-$(GOOS)-$(GOARCH)
@@ -66,8 +69,7 @@ build-specified: build/tp-link-exporter-$(GOOS)-$(GOARCH)
 
 # Build for the specified platform
 build/tp-link-exporter-$(GOOS)-$(GOARCH):
-	go generate ./...
-	go build $(BUILD_FLAGS) -o $@ cmd/tp-link-exporter/*.go
+	CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $@ cmd/*.go
 
 # Clean all dynamically created files
 clean:

@@ -46,7 +46,7 @@ func defaultCommand(context *cli.Context) error {
 		}
 	}()
 
-	log.Info("Listening", zap.String("address", ":2112"))
+	log.Info("Listening", zap.String("address", ":8080"))
 	http.Handle("/metrics", promhttp.Handler())
-	return http.ListenAndServe(":2112", nil)
+	return http.ListenAndServe(":8080", nil)
 }
