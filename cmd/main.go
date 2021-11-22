@@ -81,11 +81,6 @@ func main() {
 			Usage:       "Target address to talk to. May be specified multiple times. May be a broadcast address.",
 			DefaultText: "192.168.1.255",
 		},
-		&cli.DurationFlag{
-			Name:        "interval",
-			Usage:       "Interval to request devices' metrics",
-			DefaultText: "5s",
-		},
 	}
 
 	sort.Sort(cli.FlagsByName(app.Flags))

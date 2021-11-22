@@ -3,23 +3,20 @@ package tplink
 import (
 	"encoding/json"
 	"net"
-	"time"
 
 	"go.uber.org/zap"
 )
 
 type Broadcaster struct {
 	targets   []string
-	interval  time.Duration
 	socket    *net.UDPConn
 	responses chan *DeviceResponse
 	log       *zap.Logger
 }
 
-func NewBroadcaster(targets []string, interval time.Duration, log *zap.Logger) *Broadcaster {
+func NewBroadcaster(targets []string, log *zap.Logger) *Broadcaster {
 	return &Broadcaster{
 		targets:   targets,
-		interval:  interval,
 		responses: make(chan *DeviceResponse),
 		log:       log,
 	}
@@ -36,8 +33,6 @@ func (f *Broadcaster) Listen() error {
 		return err
 	}
 	f.log.Info("Listening for responses", zap.String("address", f.socket.LocalAddr().String()))
-
-	go f.broadcastContinously()
 
 	b := make([]byte, 1024)
 	for {
@@ -79,16 +74,4 @@ func (f *Broadcaster) Broadcast() error {
 	}
 
 	return nil
-}
-
-func (f *Broadcaster) broadcastContinously() {
-	ticker := time.NewTicker(f.interval)
-	defer ticker.Stop()
-	for {
-		<-ticker.C
-		err := f.Broadcast()
-		if err != nil {
-			f.log.Error("Failed to broadcast", zap.Error(err))
-		}
-	}
 }

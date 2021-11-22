@@ -62,6 +62,14 @@ func NewCollector() *Collector {
 	}
 }
 
+func (c *Collector) Reset() {
+	c.CurrentGauge.Reset()
+	c.VoltageGauge.Reset()
+	c.PowerGauge.Reset()
+	c.RelayStateGauge.Reset()
+	c.RSSIGauge.Reset()
+}
+
 func (c *Collector) CollectDevice(device *DeviceResponse) {
 	if device.EnergyMeter.Info != nil && device.EnergyMeter.Info.ErrorCode == 0 {
 		c.CurrentGauge.WithLabelValues(device.Device.Info.Alias, device.Device.Info.DeviceID, device.Device.Info.Model, device.Device.Info.Type).Set(device.EnergyMeter.Info.Current)
