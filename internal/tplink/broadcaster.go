@@ -9,17 +9,17 @@ import (
 )
 
 type Broadcaster struct {
-	BroadcastAddress string
-
+	targets   []string
+	interval  time.Duration
 	socket    *net.UDPConn
 	responses chan *DeviceResponse
 	log       *zap.Logger
 }
 
-func NewBroadcaster(log *zap.Logger) *Broadcaster {
+func NewBroadcaster(targets []string, interval time.Duration, log *zap.Logger) *Broadcaster {
 	return &Broadcaster{
-		BroadcastAddress: "255.255.255.255",
-
+		targets:   targets,
+		interval:  interval,
 		responses: make(chan *DeviceResponse),
 		log:       log,
 	}
@@ -64,23 +64,25 @@ func (f *Broadcaster) Responses() chan *DeviceResponse {
 }
 
 func (f *Broadcaster) Broadcast() error {
-	address, err := net.ResolveUDPAddr("udp4", f.BroadcastAddress)
-	if err != nil {
-		return err
-	}
+	for _, address := range f.targets {
+		resolvedAddress, err := net.ResolveUDPAddr("udp4", address+":9999")
+		if err != nil {
+			return err
+		}
 
-	f.log.Debug("Broadcasting", zap.String("address", address.String()))
-	message := EncryptMessage(InfoMessage)
-	_, err = f.socket.WriteTo(message, address)
-	if err != nil {
-		return err
+		f.log.Debug("Broadcasting", zap.String("address", resolvedAddress.String()))
+		message := EncryptMessage(InfoMessage)
+		_, err = f.socket.WriteTo(message, resolvedAddress)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
 func (f *Broadcaster) broadcastContinously() {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(f.interval)
 	defer ticker.Stop()
 	for {
 		<-ticker.C

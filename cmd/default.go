@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/AlexGustafsson/tp-link-exporter/internal/tplink"
 	"github.com/prometheus/client_golang/prometheus"
@@ -13,8 +14,22 @@ import (
 )
 
 func defaultCommand(context *cli.Context) error {
-	address := context.String("address")
 	verbose := context.Bool("verbose")
+
+	address := context.String("address")
+	if address == "" {
+		address = ":8080"
+	}
+
+	interval := context.Duration("interval")
+	if interval == 0 {
+		interval = 5 * time.Second
+	}
+
+	targets := context.StringSlice("target")
+	if targets == nil {
+		targets = []string{"192.168.1.255"}
+	}
 
 	// Configure base logging
 	logConfig := zap.NewProductionConfig()
@@ -28,8 +43,7 @@ func defaultCommand(context *cli.Context) error {
 	}
 	defer log.Sync()
 
-	broadcaster := tplink.NewBroadcaster(log)
-	broadcaster.BroadcastAddress = address + ":9999"
+	broadcaster := tplink.NewBroadcaster(targets, interval, log)
 	log.Info("Finding devices", zap.String("address", address), zap.Int("port", 9999))
 	go broadcaster.Listen()
 
@@ -46,7 +60,7 @@ func defaultCommand(context *cli.Context) error {
 		}
 	}()
 
-	log.Info("Listening", zap.String("address", ":8080"))
+	log.Info("Listening", zap.String("address", address))
 	http.Handle("/metrics", promhttp.Handler())
-	return http.ListenAndServe(":8080", nil)
+	return http.ListenAndServe(address, nil)
 }

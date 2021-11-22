@@ -73,8 +73,18 @@ func main() {
 		},
 		&cli.StringFlag{
 			Name:        "address",
-			Usage:       "Address to talk to. May be a broadcast address",
+			Usage:       "Address to serve metrics on",
+			DefaultText: ":8080",
+		},
+		&cli.StringSliceFlag{
+			Name:        "target",
+			Usage:       "Target address to talk to. May be specified multiple times. May be a broadcast address.",
 			DefaultText: "192.168.1.255",
+		},
+		&cli.DurationFlag{
+			Name:        "interval",
+			Usage:       "Interval to request devices' metrics",
+			DefaultText: "5s",
 		},
 	}
 
