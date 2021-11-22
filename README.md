@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".examples/dashboard.png" alt="Dashboard Example">
+  <img src="examples/dashboard.png" alt="Dashboard Example">
 </p>
 <p align="center">
   <a href="https://github.com/AlexGustafsson/tp-link-exporter/blob/master/go.mod">
