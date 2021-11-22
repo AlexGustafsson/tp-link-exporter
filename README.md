@@ -1,4 +1,7 @@
 <p align="center">
+  <img src=".examples/dashboard.png" alt="Dashboard Example">
+</p>
+<p align="center">
   <a href="https://github.com/AlexGustafsson/tp-link-exporter/blob/master/go.mod">
     <img src="https://shields.io/github/go-mod/go-version/AlexGustafsson/tp-link-exporter" alt="Go Version" />
   </a>
