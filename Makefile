@@ -35,7 +35,7 @@ build-docker:
 	docker build -t tp-link-exporter:latest -t tp-link-exporter:$(VERSION) .
 
 # Package for release
-release: tools
+release:
 	GOOS=darwin GOARCH=amd64 $(MAKE) build-specified
 	GOOS=darwin GOARCH=arm64 $(MAKE) build-specified
 	GOOS=linux GOARCH=amd64 $(MAKE) build-specified
