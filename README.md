@@ -77,7 +77,6 @@ _Note: This project is still actively being developed. The documentation is an o
 | `tplink_energy_current` | Gauge | `device_id`, `model`, `name`, `type` | Current current (amps) |
 | `tplink_energy_power_watts` | Gauge | `device_id`, `model`, `name`, `type` | Current power draw (watts) |
 | `tplink_energy_voltage` | Gauge | `device_id`, `model`, `name`, `type` | Current voltage |
-| `tplink_relay_on_time_seconds` | Gauge | `device_id`, `model`, `name`, `type` | Total seconds the relay has been on |
 | `tplink_relay_state` | Gauge | `device_id`, `model`, `name`, `type` | Current state of the relay, 0 for off, 1 for on |
 | `tplink_statistics_rssi` | Gauge | `device_id`, `model`, `name`, `type` | Current Received Signal Strength Indication (RSSI) |
 
@@ -100,9 +99,6 @@ tplink_energy_power_watts{device_id="8078FAAA8BC64613B3AA41334DEC4DCE",model="HS
 # HELP tplink_energy_voltage Voltage
 # TYPE tplink_energy_voltage gauge
 tplink_energy_voltage{device_id="8078FAAA8BC64613B3AA41334DEC4DCE",model="HS110(EU)",name="Server",type="IOT.SMARTPLUGSWITCH"} 234.482012
-# HELP tplink_relay_on_time_seconds On time in seconds
-# TYPE tplink_relay_on_time_seconds gauge
-tplink_relay_on_time_seconds{device_id="8078FAAA8BC64613B3AA41334DEC4DCE",model="HS110(EU)",name="Server",type="IOT.SMARTPLUGSWITCH"} 3692
 # HELP tplink_relay_state State of the relay. 1 is on, 0 is off
 # TYPE tplink_relay_state gauge
 tplink_relay_state{device_id="8078FAAA8BC64613B3AA41334DEC4DCE",model="HS110(EU)",name="Server",type="IOT.SMARTPLUGSWITCH"} 1

@@ -7,7 +7,6 @@ type Collector struct {
 	VoltageGauge    *prometheus.GaugeVec
 	PowerGauge      *prometheus.GaugeVec
 	RelayStateGauge *prometheus.GaugeVec
-	OnTimeGauge     *prometheus.GaugeVec
 	RSSIGauge       *prometheus.GaugeVec
 }
 
@@ -51,15 +50,6 @@ func NewCollector() *Collector {
 			},
 			labels,
 		),
-		OnTimeGauge: prometheus.NewGaugeVec(
-			prometheus.GaugeOpts{
-				Namespace: "tplink",
-				Subsystem: "relay",
-				Name:      "on_time_seconds",
-				Help:      "On time in seconds",
-			},
-			labels,
-		),
 		RSSIGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Namespace: "tplink",
@@ -80,7 +70,6 @@ func (c *Collector) CollectDevice(device *DeviceResponse) {
 	}
 
 	c.RelayStateGauge.WithLabelValues(device.Device.Info.Alias, device.Device.Info.DeviceID, device.Device.Info.Model, device.Device.Info.Type).Set(float64(device.Device.Info.RelayState))
-	c.OnTimeGauge.WithLabelValues(device.Device.Info.Alias, device.Device.Info.DeviceID, device.Device.Info.Model, device.Device.Info.Type).Set(float64(device.Device.Info.OnTime))
 	c.RSSIGauge.WithLabelValues(device.Device.Info.Alias, device.Device.Info.DeviceID, device.Device.Info.Model, device.Device.Info.Type).Set(device.Device.Info.RSSI)
 }
 
@@ -89,7 +78,6 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 	c.VoltageGauge.Collect(ch)
 	c.PowerGauge.Collect(ch)
 	c.RelayStateGauge.Collect(ch)
-	c.OnTimeGauge.Collect(ch)
 	c.RSSIGauge.Collect(ch)
 }
 
